@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="nl">
+<head>
+	<meta charset="UTF-8">
+	<title>Coins</title>
+	<link rel="stylesheet" href="js/lib/bootstrap/dist/css/bootstrap.min.css"/>
+	<style type="text/css">
+		.red {
+			color: red;
+		}
+
+		.green {
+			color: green;
+		}
+	</style>
+</head>
+<body ng-app="myApp">
+	<div class="container" ng-controller="bikeController as vm">
+		<h1>Coins</h1>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-striped">
+					<tr>
+						<th>Naam</th>
+						<th>Waarde</th>
+						<th>Aantal</th>
+						<th>Prijs</th>
+						<th>AK prijs</th>
+						<th>Winst</th>
+						<th>AK datum</th>
+					</tr>
+					<tr ng-repeat="coin in vm.coins">
+						<td>{{coin.name}}</td>
+						<td>{{coin.price_eur | number:5}}</td>
+						<td>{{coin.aantal}}</td>
+						<td>{{coin.price_eur*coin.aantal | number:2}}</td>
+						<td>{{coin.aankoop}}</td>
+						<td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.price_eur*coin.aantal-coin.aankoop | number:2}}</td>
+						<td>{{coin.datum}}</td>
+					</tr>
+				</table>
+				<h3>Totale winst: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span></h3>
+			</div>
+		</div>
+	</div>
+<script src="js/lib/angular/angular.min.js"></script>
+<script>
+	angular.module('myApp', [])
+			.controller('bikeController', filmController);
+	function filmController($http) {
+        // 0. initialisaties, variabelen
+        var vm = this;
+        var baseUrl = 'https://api.coinmarketcap.com/v1/';
+        vm.total = 0;
+        var munt = [
+            {
+            	naam:'ethereum',
+                aantal: 1.5,
+                aankoop: 402.43,
+                datum: "10/10/2017"
+            },
+			{
+                naam:'bitcoin',
+				aantal: 0.0017,
+				aankoop: 0,
+				datum: "29/8/2017"
+        	},
+			{
+                naam:'nem',
+            	aantal: 36,
+            	aankoop: 10,
+            	datum: "1/9/2017"
+        	},
+        	{
+                naam:'ripple',
+            	aantal: 52.734627,
+            	aankoop: 10,
+            	datum: "29/8/2017"
+        	},
+        	{
+                naam:'monero',
+            	aantal: 0.10315,
+            	aankoop: 0,
+            	datum: "12/10/2017"
+        	},
+        	{
+                naam:'bytecoin-bcn',
+            	aantal: 417.18142,
+            	aankoop: 0,
+            	datum: "29/8/2017"
+        	}
+		];
+        vm.coins = [];
+        vm.totaal = 0;
+        vm.succes = false;
+        munt.forEach(function (item, index) {
+            $http({
+                method: 'get',
+                url   : baseUrl+ '/ticker/'+item.naam+'/?convert=EUR'
+            }).then(function (coins) {
+                vm.totaal = vm.totaal + coins.data[0].price_eur*item.aantal-item.aankoop;
+                vm.succes = vm.totaal > 0;
+                coins.data[0].succes = coins.data[0].price_eur*item.aantal-item.aankoop > 0;
+                coins.data[0].aantal = item.aantal;
+                coins.data[0].aankoop = item.aankoop;
+                coins.data[0].datum = item.datum;
+                vm.coins.push(coins.data[0]);
+            }).catch(function (err) {
+                alert('Error: er is een fout opgetreden ' + err);
+            });
+        });
+    }
+</script>
+</body>
+</html>
