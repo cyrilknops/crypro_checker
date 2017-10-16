@@ -57,42 +57,43 @@
         var baseUrl = 'https://api.coinmarketcap.com/v1/';
         vm.total = 0;
         vm.currency = "EUR"; //Can be EUR or USD
-        vm.coint = [
-            {
-            	name:'ethereum',
-                amount: 1.5,
-                purchase: 401.43,
-                date: "10/10/2017"
-            }
-		];
+        vm.coint = [];
+        $http({
+            method: 'get',
+            url   : './data/config.json'
+        }).then(function (coins) {
+           vm.coint = coins.data;
+            vm.coint.forEach(function (item, index) {
+                $http({
+                    method: 'get',
+                    url   : baseUrl+ '/ticker/'+item.name+'/?convert=EUR'
+                }).then(function (coins) {
+                    if(vm.currency == "EUR") {
+                        vm.totaal = vm.totaal + coins.data[0].price_eur * item.amount - item.purchase;
+                        coins.data[0].succes = coins.data[0].price_eur*item.amount-item.purchase > 0;
+                        coins.data[0].price = coins.data[0].price_eur;
+                    }else if(vm.currency == "USD"){
+                        vm.totaal = vm.totaal + coins.data[0].price_usd * item.amount - item.purchase;
+                        coins.data[0].succes = coins.data[0].price_usd * item.amount-item.purchase > 0;
+                        coins.data[0].price = coins.data[0].price_usd;
+                    }
+                    vm.succes = vm.totaal > 0;
+                    coins.data[0].succes2 = coins.data[0].percent_change_24h > 0;
+                    coins.data[0].succes3 = coins.data[0].percent_change_1h > 0;
+                    coins.data[0].amount = item.amount;
+                    coins.data[0].purchase = item.purchase;
+                    coins.data[0].date = item.date;
+                    vm.coins.push(coins.data[0]);
+                }).catch(function (err) {
+                    alert('Error: er is een fout opgetreden ' + err);
+                });
+            });
+        }).catch(function (err) {
+            alert('Error: er is een fout opgetreden ' + err);
+        });
         vm.coins = [];
         vm.totaal = 0;
         vm.succes = false;
-        vm.coint.forEach(function (item, index) {
-            $http({
-                method: 'get',
-                url   : baseUrl+ '/ticker/'+item.name+'/?convert=EUR'
-            }).then(function (coins) {
-                if(vm.currency == "EUR") {
-                    vm.totaal = vm.totaal + coins.data[0].price_eur * item.amount - item.purchase;
-                    coins.data[0].succes = coins.data[0].price_eur*item.amount-item.purchase > 0;
-                    coins.data[0].price = coins.data[0].price_eur;
-                }else if(vm.currency == "USD"){
-                    vm.totaal = vm.totaal + coins.data[0].price_usd * item.amount - item.purchase;
-                    coins.data[0].succes = coins.data[0].price_usd * item.amount-item.purchase > 0;
-                    coins.data[0].price = coins.data[0].price_usd;
-                }
-                vm.succes = vm.totaal > 0;
-                coins.data[0].succes2 = coins.data[0].percent_change_24h > 0;
-                coins.data[0].succes3 = coins.data[0].percent_change_1h > 0;
-                coins.data[0].amount = item.amount;
-                coins.data[0].purchase = item.purchase;
-                coins.data[0].date = item.date;
-                vm.coins.push(coins.data[0]);
-            }).catch(function (err) {
-                alert('Error: er is een fout opgetreden ' + err);
-            });
-        });
     }
 </script>
 <script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/currency.js"></script>

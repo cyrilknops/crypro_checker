@@ -8,7 +8,7 @@ To visualize your cryptocoins
 
 ### Edit index.html ###
 - change vm.currency to USD or EUR
-- change munt to your cryptocoin
+- change /data/config.json file so that it matches your coins
 
         {
             	name:'ethereum', //name this must equal the coint name in coinmarketcap
