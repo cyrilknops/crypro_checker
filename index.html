@@ -30,20 +30,21 @@
 						<th>% (24h)</th>
 						<th>Purchase date</th>
 					</tr>
-					<tr ng-repeat="coin in vm.coins">
-						<td>{{coin.name}}</td>
-						<td>{{coin.price | number:5}}</td>
-						<td>{{coin.amount}}</td>
-						<td>{{coin.price*coin.amount | number:2}}</td>
-						<td>{{coin.purchase}}</td>
-						<td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.price*coin.amount-coin.purchase | number:2}}</td>
-						<td ng-class='{red : !coin.succes3, green: coin.succes3}' >{{coin.percent_change_1h | number:2}}</td>
-						<td ng-class='{red : !coin.succes2, green: coin.succes2}' >{{coin.percent_change_24h | number:2}}</td>
-						<td>{{coin.date}}</td>
+                    <tr ng-repeat="coin in vm.coins">
+                        <td>{{coin.name}}</td>
+                        <td>{{coin.price | number:5}}</td>
+                        <td>{{coin.amount}}</td>
+                        <td>{{coin.price*coin.amount | number:2}}</td>
+                        <td>{{coin.purchase}}</td>
+                        <td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.price*coin.amount-coin.purchase | number:2}}</td>
+                        <td ng-class='{red : !coin.succes3, green: coin.succes3}' >{{coin.percent_change_1h | number:2}}</td>
+                        <td ng-class='{red : !coin.succes2, green: coin.succes2}' >{{coin.percent_change_24h | number:2}}</td>
+                        <td>{{coin.date}}</td>
 					</tr>
 				</table>
 				<h3>Total Profit: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span> {{vm.currency}}</h3>
 			</div>
+            <div ng-repeat="coin in vm.coint" style="margin-bottom: 10px" class="coinmarketcap-currency-widget col-md-3" data-currency="{{coin.name}}" data-base="EUR"  data-secondary="BTC"></div>
 		</div>
 	</div>
 <script src="js/lib/angular/angular.min.js"></script>
@@ -56,24 +57,18 @@
         var baseUrl = 'https://api.coinmarketcap.com/v1/';
         vm.total = 0;
         vm.currency = "EUR"; //Can be EUR or USD
-        var coint = [
+        vm.coint = [
             {
             	name:'ethereum',
-                amount: 1,
-                purchase: 275.47,
+                amount: 1.5,
+                purchase: 401.43,
                 date: "10/10/2017"
-            },
-			{
-                name:'bitcoin',
-                amount: 0.01109924,
-                purchase: 50.34,
-				date: "29/8/2017"
-        	}
+            }
 		];
         vm.coins = [];
         vm.totaal = 0;
         vm.succes = false;
-        coint.forEach(function (item, index) {
+        vm.coint.forEach(function (item, index) {
             $http({
                 method: 'get',
                 url   : baseUrl+ '/ticker/'+item.name+'/?convert=EUR'
@@ -100,5 +95,6 @@
         });
     }
 </script>
+<script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/currency.js"></script>
 </body>
 </html>
