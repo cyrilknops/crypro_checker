@@ -20,31 +20,36 @@
 			<div class="col-md-12">
 				<table class="table table-striped">
 					<tr>
-						<th>Name</th>
+						<th>Acccount</th>
+						<th>Currency</th>
 						<th>Value {{vm.currency}}</th>
 						<th>Amount</th>
 						<th>Price {{vm.currency}}</th>
 						<th>Purchase price {{vm.currency}}</th>
 						<th>Profit {{vm.currency}}</th>
+						<th>Profit %</th>
 						<th>% (1h)</th>
 						<th>% (24h)</th>
 						<th>Purchase date</th>
 					</tr>
-                    <tr ng-repeat="coin in vm.coins">
+                    <tr ng-repeat="coin in vm.coins | orderBy : 'account'">
+						<td>{{coin.account}}</td>
                         <td>{{coin.name}}</td>
                         <td>{{coin.price | number:5}}</td>
                         <td>{{coin.amount}}</td>
                         <td>{{coin.price*coin.amount | number:2}}</td>
                         <td>{{coin.purchase}}</td>
                         <td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.price*coin.amount-coin.purchase | number:2}}</td>
-                        <td ng-class='{red : !coin.succes3, green: coin.succes3}' >{{coin.percent_change_1h | number:2}}</td>
-                        <td ng-class='{red : !coin.succes2, green: coin.succes2}' >{{coin.percent_change_24h | number:2}}</td>
+						<td ng-class='{red : !coin.succes, green: coin.succes}' >{{(coin.price*coin.amount-coin.purchase)/coin.purchase*100 | number:2}}%</td>
+                        <td ng-class='{red : !coin.succes3, green: coin.succes3}' >{{coin.percent_change_1h | number:2}}%</td>
+                        <td ng-class='{red : !coin.succes2, green: coin.succes2}' >{{coin.percent_change_24h | number:2}}%</td>
                         <td>{{coin.date}}</td>
 					</tr>
 				</table>
-				<h3>Total Profit: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span> {{vm.currency}}</h3>
+				<h3>Total value: <span>{{vm.totalV | number: 2}}</span> {{vm.currency}}</h3>
+				<h3>Total profit: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span> {{vm.currency}}</h3>
 			</div>
-            <div ng-repeat="coin in vm.coint" style="margin-bottom: 10px" class="coinmarketcap-currency-widget col-md-3" data-currency="{{coin.name}}" data-base="EUR"  data-secondary="BTC"></div>
+            <!--<div ng-repeat="coin in vm.coint | orderBy: 'name'" style="margin-bottom: 10px" class="coinmarketcap-currency-widget col-md-3" data-currency="{{coin.name}}" data-base="EUR"  data-secondary="BTC"></div>-->
 		</div>
 	</div>
 <script src="js/lib/angular/angular.min.js"></script>
@@ -56,8 +61,10 @@
         var vm = this;
         var baseUrl = 'https://api.coinmarketcap.com/v1/';
         vm.total = 0;
+        vm.totalV = 0;
         vm.currency = "EUR"; //Can be EUR or USD
         vm.coint = [];
+        var error = false;
         $http({
             method: 'get',
             url   : './data/config.json'
@@ -66,13 +73,15 @@
             vm.coint.forEach(function (item, index) {
                 $http({
                     method: 'get',
-                    url   : baseUrl+ '/ticker/'+item.name+'/?convert=EUR'
+                    url   : item.url
                 }).then(function (coins) {
                     if(vm.currency == "EUR") {
+                        vm.totalV = vm.totalV + coins.data[0].price_eur * item.amount;
                         vm.totaal = vm.totaal + coins.data[0].price_eur * item.amount - item.purchase;
                         coins.data[0].succes = coins.data[0].price_eur*item.amount-item.purchase > 0;
                         coins.data[0].price = coins.data[0].price_eur;
                     }else if(vm.currency == "USD"){
+                        vm.totalV = vm.totalV + coins.data[0].price_usd * item.amount;
                         vm.totaal = vm.totaal + coins.data[0].price_usd * item.amount - item.purchase;
                         coins.data[0].succes = coins.data[0].price_usd * item.amount-item.purchase > 0;
                         coins.data[0].price = coins.data[0].price_usd;
@@ -83,14 +92,21 @@
                     coins.data[0].amount = item.amount;
                     coins.data[0].purchase = item.purchase;
                     coins.data[0].date = item.date;
+                    coins.data[0].account = item.name;
                     vm.coins.push(coins.data[0]);
+
                 }).catch(function (err) {
-                    alert('Error: er is een fout opgetreden ' + err);
+                    //alert('Error: er is een fout opgetreden ' + err);
+					error = true;
                 });
             });
         }).catch(function (err) {
-            alert('Error: er is een fout opgetreden ' + err);
+            //alert('Error: er is een fout opgetreden ' + err);
+			error = true
         });
+        if(error){
+            alert('Error: er is een fout opgetreden ' + err);
+		}
         vm.coins = [];
         vm.totaal = 0;
         vm.succes = false;
