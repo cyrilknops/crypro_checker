@@ -11,7 +11,8 @@ To visualize your cryptocoins
 - change /data/config.json file so that it matches your coins
 
         {
-            	name:'ethereum', //name this must equal the coint name in coinmarketcap
+            	name:'ethereum', //the name you want to call the account
+            	"url":"https://api.coinmarketcap.com/v1/ticker/ethereum/?convert=EUR", //the url
                 amount: 1.5, //amount
                 purchase: 402.43, //purchase price
                 date: "10/10/2017" //purchase data

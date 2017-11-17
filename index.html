@@ -49,9 +49,11 @@
 				<h3>Total value: <span>{{vm.totalV | number: 2}}</span> {{vm.currency}}</h3>
 				<h3>Total profit: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span> {{vm.currency}}</h3>
 			</div>
-            <!--<div ng-repeat="coin in vm.coint | orderBy: 'name'" style="margin-bottom: 10px" class="coinmarketcap-currency-widget col-md-3" data-currency="{{coin.name}}" data-base="EUR"  data-secondary="BTC"></div>-->
+            <div class="col-md-offset-2 col-md-8"><a href="https://bitconnect.co/?ref=kevinSchmidt"><img src="https://bitconnect.co/upload/image/banner/lending/BitConnect-lending-728X90.gif?v=98745478" /></a></div>
+			<!--<div ng-repeat="coin in vm.coint | orderBy: 'name'" style="margin-bottom: 10px" class="coinmarketcap-currency-widget col-md-3" data-currency="{{coin.name}}" data-base="EUR"  data-secondary="BTC"></div>-->
 		</div>
 	</div>
+
 <script src="js/lib/angular/angular.min.js"></script>
 <script>
 	angular.module('myApp', [])
@@ -69,7 +71,7 @@
             method: 'get',
             url   : './data/config.json'
         }).then(function (coins) {
-           vm.coint = coins.data;
+            vm.coint = coins.data;
             vm.coint.forEach(function (item, index) {
                 $http({
                     method: 'get',
@@ -97,12 +99,12 @@
 
                 }).catch(function (err) {
                     //alert('Error: er is een fout opgetreden ' + err);
-					error = true;
+                    error = true;
                 });
             });
         }).catch(function (err) {
             //alert('Error: er is een fout opgetreden ' + err);
-			error = true
+            error = true
         });
         if(error){
             alert('Error: er is een fout opgetreden ' + err);
