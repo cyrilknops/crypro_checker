@@ -20,34 +20,45 @@
 			<div class="col-md-12">
 				<table class="table table-striped">
 					<tr>
-						<th>Acccount</th>
+						<th><a href="#" ng-click="vm.sortType = 'account'; vm.sortReverse = !vm.sortReverse">Account</a></th>
 						<th>Currency</th>
-						<th>Value {{vm.currency}}</th>
-						<th>Amount</th>
+						<th><a href="#" ng-click="vm.sortType = 'price'; vm.sortReverse = !vm.sortReverse">Value {{vm.currency}}</a></th>
+						<th><a href="#" ng-click="vm.sortType = 'amount'; vm.sortReverse = !vm.sortReverse">Amount</a></th>
 						<th>Price {{vm.currency}}</th>
 						<th>Purchase price {{vm.currency}}</th>
-						<th>Profit {{vm.currency}}</th>
-						<th>Profit %</th>
+						<th><a href="#" ng-click="vm.sortType = 'profit'; vm.sortReverse = !vm.sortReverse">Profit {{vm.currency}}</a></th>
+						<th><a href="#" ng-click="vm.sortType = 'profitP'; vm.sortReverse = !vm.sortReverse">Profit %</a></th>
 						<th>% (1h)</th>
 						<th>% (24h)</th>
 						<th>Purchase date</th>
 					</tr>
-                    <tr ng-repeat="coin in vm.coins | orderBy : 'account'">
-						<td>{{coin.account}}</td>
-                        <td>{{coin.name}}</td>
+                    <tr ng-repeat="coin in vm.coins | orderBy : vm.sortType : vm.sortReverse">
+						<td><a href="https://coinmarketcap.com/currencies/{{coin.account}}">{{coin.account}}</a></td>
+						<td>{{coin.name}}</td>
                         <td>{{coin.price | number:5}}</td>
                         <td>{{coin.amount}}</td>
                         <td>{{coin.price*coin.amount | number:2}}</td>
                         <td>{{coin.purchase}}</td>
-                        <td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.price*coin.amount-coin.purchase | number:2}}</td>
-						<td ng-class='{red : !coin.succes, green: coin.succes}' >{{(coin.price*coin.amount-coin.purchase)/coin.purchase*100 | number:2}}%</td>
+                        <td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.profit | number:2}}</td>
+						<td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.profitP | number:2}}%</td>
                         <td ng-class='{red : !coin.succes3, green: coin.succes3}' >{{coin.percent_change_1h | number:2}}%</td>
                         <td ng-class='{red : !coin.succes2, green: coin.succes2}' >{{coin.percent_change_24h | number:2}}%</td>
                         <td>{{coin.date}}</td>
 					</tr>
+					<tr>
+						<td><h4>Total invested: <span>{{vm.totalI | number: 2}}</span> {{vm.currency}}</h4></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td><h4>Total value: {{vm.totalV | number: 2}}</span> {{vm.currency}}</h4></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td><h4>Total profit: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span></h4></td>
+						<td></td>
+						<td></td>
+					</tr>
 				</table>
-				<h3>Total value: <span>{{vm.totalV | number: 2}}</span> {{vm.currency}}</h3>
-				<h3>Total profit: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span> {{vm.currency}}</h3>
 			</div>
             <div class="col-md-offset-2 col-md-8"><a href="https://bitconnect.co/?ref=kevinSchmidt"><img src="https://bitconnect.co/upload/image/banner/lending/BitConnect-lending-728X90.gif?v=98745478" /></a></div>
 			<!--<div ng-repeat="coin in vm.coint | orderBy: 'name'" style="margin-bottom: 10px" class="coinmarketcap-currency-widget col-md-3" data-currency="{{coin.name}}" data-base="EUR"  data-secondary="BTC"></div>-->
@@ -64,6 +75,7 @@
         var baseUrl = 'https://api.coinmarketcap.com/v1/';
         vm.total = 0;
         vm.totalV = 0;
+        vm.totalI = 0;
         vm.currency = "EUR"; //Can be EUR or USD
         vm.coint = [];
         var error = false;
@@ -88,6 +100,7 @@
                         coins.data[0].succes = coins.data[0].price_usd * item.amount-item.purchase > 0;
                         coins.data[0].price = coins.data[0].price_usd;
                     }
+                    vm.totalI = vm.totalI + item.purchase;
                     vm.succes = vm.totaal > 0;
                     coins.data[0].succes2 = coins.data[0].percent_change_24h > 0;
                     coins.data[0].succes3 = coins.data[0].percent_change_1h > 0;
@@ -95,6 +108,8 @@
                     coins.data[0].purchase = item.purchase;
                     coins.data[0].date = item.date;
                     coins.data[0].account = item.name;
+                    coins.data[0].profit = coins.data[0].price*coins.data[0].amount-coins.data[0].purchase;
+                    coins.data[0].profitP = (coins.data[0].price*coins.data[0].amount-coins.data[0].purchase)/coins.data[0].purchase*100;
                     vm.coins.push(coins.data[0]);
 
                 }).catch(function (err) {
