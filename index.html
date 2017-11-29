@@ -33,7 +33,7 @@
 						<th>Purchase date</th>
 					</tr>
                     <tr ng-repeat="coin in vm.coins | orderBy : vm.sortType : vm.sortReverse">
-						<td><a href="https://coinmarketcap.com/currencies/{{coin.account}}">{{coin.account}}</a></td>
+						<td><a target="_blank" href="https://coinmarketcap.com/currencies/{{coin.account}}">{{coin.account}}</a></td>
 						<td>{{coin.name}}</td>
                         <td>{{coin.price | number:5}}</td>
                         <td>{{coin.amount}}</td>
