@@ -11,52 +11,59 @@
 		.green {
 			color: green;
 		}
+		th {
+			vertical-align: inherit !important;
+			text-align: right;
+		}
 	</style>
 </head>
 <body ng-app="myApp">
 	<div class="container" ng-controller="bikeController as vm">
-		<h1>Coins</h1>
+		<h1>Coins
+			<select ng-model="vm.decimal" style="font-size: medium">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+		</h1>
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-md-12" style="text-align: right">
 				<table class="table table-striped">
-					<tr>
-						<th><a href="#" ng-click="vm.sortType = 'account'; vm.sortReverse = !vm.sortReverse">Account</a></th>
-						<th>Currency</th>
-						<th><a href="#" ng-click="vm.sortType = 'price'; vm.sortReverse = !vm.sortReverse">Value {{vm.currency}}</a></th>
-						<th><a href="#" ng-click="vm.sortType = 'amount'; vm.sortReverse = !vm.sortReverse">Amount</a></th>
-						<th>Price {{vm.currency}}</th>
-						<th>Purchase price {{vm.currency}}</th>
+					<tr style="text-align: right">
+						<th width="10%"><a href="#" ng-click="vm.sortType = 'name'; vm.sortReverse = !vm.sortReverse">Currency</a></th>
+						<th width="10%"><a href="#" ng-click="vm.sortType = 'account'; vm.sortReverse = !vm.sortReverse">Account</a></th>
+						<th width="10%"><a href="#" ng-click="vm.sortType = 'price'; vm.sortReverse = !vm.sortReverse">Value {{vm.currency}}</a></th>
+						<th width="10%"><a href="#" ng-click="vm.sortType = 'amount'; vm.sortReverse = !vm.sortReverse">Amount</a></th>
+						<th width="10%">Price {{vm.currency}}</th>
+						<th>Cost {{vm.currency}}</th>
 						<th><a href="#" ng-click="vm.sortType = 'profit'; vm.sortReverse = !vm.sortReverse">Profit {{vm.currency}}</a></th>
 						<th><a href="#" ng-click="vm.sortType = 'profitP'; vm.sortReverse = !vm.sortReverse">Profit %</a></th>
-						<th>% (1h)</th>
+						<th width="5%">% (1h)</th>
 						<th>% (24h)</th>
 						<th>Purchase date</th>
 					</tr>
                     <tr ng-repeat="coin in vm.coins | orderBy : vm.sortType : vm.sortReverse">
-						<td><a target="_blank" href="https://coinmarketcap.com/currencies/{{coin.account}}">{{coin.account}}</a></td>
-						<td>{{coin.name}}</td>
-                        <td>{{coin.price | number:5}}</td>
+						<td><a target="_blank" href="https://coinmarketcap.com/currencies/{{coin.url.split('/')[5]}}">{{coin.name}}</a></td>
+						<td>{{coin.account}}</td>
+                        <td>{{coin.price | number: vm.decimal}}</td>
                         <td>{{coin.amount}}</td>
-                        <td>{{coin.price*coin.amount | number:2}}</td>
+                        <td>{{coin.price*coin.amount | number: vm.decimal}}</td>
                         <td>{{coin.purchase}}</td>
-                        <td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.profit | number:2}}</td>
-						<td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.profitP | number:2}}%</td>
-                        <td ng-class='{red : !coin.succes3, green: coin.succes3}' >{{coin.percent_change_1h | number:2}}%</td>
-                        <td ng-class='{red : !coin.succes2, green: coin.succes2}' >{{coin.percent_change_24h | number:2}}%</td>
+                        <td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.profit | number: vm.decimal}}</td>
+						<td ng-class='{red : !coin.succes, green: coin.succes}' >{{coin.profitP | number: 2}}%</td>
+                        <td ng-class='{red : !coin.succes3, green: coin.succes3}' >{{coin.percent_change_1h | number: 2}}%</td>
+                        <td ng-class='{red : !coin.succes2, green: coin.succes2}' >{{coin.percent_change_24h | number: 2}}%</td>
                         <td>{{coin.date}}</td>
 					</tr>
 					<tr>
-						<td><h4>Total invested: <span>{{vm.totalI | number: 2}}</span> {{vm.currency}}</h4></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td><h4>Total value: {{vm.totalV | number: 2}}</span> {{vm.currency}}</h4></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td><h4>Total profit: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span></h4></td>
-						<td></td>
-						<td></td>
+						<td width="20%"><h4>Total invested: <span>{{vm.totalI | number: 2}}</span> {{vm.currency}}</h4></td>
+						<td width="20%"></td>
+						<td width="15%"><h4>Total value: {{vm.totalV | number: 2}}</span> {{vm.currency}}</h4></td>
+						<td width="20%"></td>
+						<td width="15%"><h4>Total profit: <span ng-class='{red : !vm.succes, green: vm.succes}'>{{vm.totaal | number: 2}}</span> {{vm.currency}}</h4></td>
+						<td width="10%"></td>
 					</tr>
 				</table>
 			</div>
@@ -72,12 +79,13 @@
 	function filmController($http) {
         // 0. initialisaties, variabelen
         var vm = this;
-        var baseUrl = 'https://api.coinmarketcap.com/v1/';
         vm.total = 0;
         vm.totalV = 0;
         vm.totalI = 0;
         vm.currency = "EUR"; //Can be EUR or USD
         vm.coint = [];
+        vm.sortType = 'name';
+        vm.decimal = '2';
         var error = false;
         $http({
             method: 'get',
@@ -102,6 +110,7 @@
                     }
                     vm.totalI = vm.totalI + item.purchase;
                     vm.succes = vm.totaal > 0;
+                    coins.data[0].url = item.url;
                     coins.data[0].succes2 = coins.data[0].percent_change_24h > 0;
                     coins.data[0].succes3 = coins.data[0].percent_change_1h > 0;
                     coins.data[0].amount = item.amount;
