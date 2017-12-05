@@ -101,19 +101,19 @@
                         vm.totalV = vm.totalV + coins.data[0].price_eur * item.amount;
                         vm.totaal = vm.totaal + coins.data[0].price_eur * item.amount - item.purchase;
                         coins.data[0].succes = coins.data[0].price_eur*item.amount-item.purchase > 0;
-                        coins.data[0].price = coins.data[0].price_eur;
+                        coins.data[0].price = parseFloat(coins.data[0].price_eur);
                     }else if(vm.currency == "USD"){
                         vm.totalV = vm.totalV + coins.data[0].price_usd * item.amount;
                         vm.totaal = vm.totaal + coins.data[0].price_usd * item.amount - item.purchase;
                         coins.data[0].succes = coins.data[0].price_usd * item.amount-item.purchase > 0;
-                        coins.data[0].price = coins.data[0].price_usd;
+                        coins.data[0].price = parseFloat(coins.data[0].price_usd);
                     }
                     vm.totalI = vm.totalI + item.purchase;
                     vm.succes = vm.totaal > 0;
                     coins.data[0].url = item.url;
                     coins.data[0].succes2 = coins.data[0].percent_change_24h > 0;
                     coins.data[0].succes3 = coins.data[0].percent_change_1h > 0;
-                    coins.data[0].amount = item.amount;
+                    coins.data[0].amount = parseFloat(item.amount);
                     coins.data[0].purchase = item.purchase;
                     coins.data[0].date = item.date;
                     coins.data[0].account = item.name;
