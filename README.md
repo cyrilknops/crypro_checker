@@ -2,7 +2,7 @@
 
 ## What is this repository for? ##
 
-To visualize your cryptocoins
+To visualize your cryptocurrencies
 
 ## How do I get set up? ##
 
@@ -20,6 +20,9 @@ To visualize your cryptocoins
 
 ### Click on index.html ###
 
+## things to do ##
+
+Make it easy to add and delete cryptocurrencies 
 
 ## Please donate i will keep on inproving and make it even more easy to use ##
 
