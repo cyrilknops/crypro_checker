@@ -124,6 +124,8 @@
                     coins.data[0].url = item.url;
                     coins.data[0].succes2 = coins.data[0].percent_change_24h > 0;
                     coins.data[0].succes3 = coins.data[0].percent_change_1h > 0;
+                    coins.data[0].percent_change_24h = parseFloat(coins.data[0].percent_change_24h);
+                    coins.data[0].percent_change_1h = parseFloat(coins.data[0].percent_change_1h);
                     coins.data[0].amount = parseFloat(item.amount);
                     coins.data[0].worth = coins.data[0].price*coins.data[0].amount;
                     coins.data[0].purchase = item.purchase;
