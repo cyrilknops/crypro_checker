@@ -23,9 +23,7 @@ To visualize your cryptocurrencies
 ## things to do ##
 
 Make it easy to add and delete cryptocurrencies 
+ and make it even more easy to use ##
 
-## Please donate i will keep on inproving and make it even more easy to use ##
-
-- Ripple: r44T2DLD2Mrd8CHoj9VvQ32o7zwn8CSfSJ
 
 Tanks!
